@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "191900858378",
+    "project_id": "reseppintar-4a013",
+    "storage_bucket": "reseppintar-4a013.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:191900858378:android:938b651e9ca63de13747f3",
+        "android_client_info": {
+          "package_name": "com.example.reseppintar_ai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCllX0FRpo7wM3T13lGe5rz3XG0YgGzJP4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
