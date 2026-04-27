@@ -2,27 +2,24 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthController extends GetxController {
-  var userName = 'Guest'.obs;
+  var isLoggedIn = false.obs;
+  var userName = ''.obs;
   var userEmail = ''.obs;
   var userPhoto = ''.obs;
-  var isLoggedIn = false.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    // Di versi 7 ke atas, WAJIB dipanasin dulu mesinnya pas awal
-    _initGoogle();
-  }
-
-  Future<void> _initGoogle() async {
-    await GoogleSignIn.instance.initialize();
-  }
+  // ID KTP Web Client lu
+  final String webClientId =
+      '191900858378-juver7eeceqcmilg8lucig584sej06fo.apps.googleusercontent.com';
 
   Future<void> loginWithGoogle() async {
     try {
-      // Namanya sekarang ganti jadi authenticate(), bukan signIn() lagi
-      final GoogleSignInAccount googleUser = await GoogleSignIn.instance
-          .authenticate();
+      // PAKAI .instance BIAR KAGA MERAH LAGI
+      // Ini cara paling sakti di versi terbaru
+      final googleSignIn = GoogleSignIn.instance;
+
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) return;
 
       userName.value = googleUser.displayName ?? 'User';
       userEmail.value = googleUser.email;
@@ -30,7 +27,6 @@ class AuthController extends GetxController {
       isLoggedIn.value = true;
 
       print('MANTAP! Login sukses: ${userName.value}');
-
       Get.offAllNamed('/home');
     } catch (error) {
       print('Gagal login bre: $error');

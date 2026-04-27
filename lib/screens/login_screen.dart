@@ -19,13 +19,21 @@ class LoginScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // 1. Logo atau Ikon Aplikasi
-              const Icon(Icons.restaurant_menu, size: 100, color: AppColors.primaryColor),
+              const Icon(
+                Icons.restaurant_menu,
+                size: 100,
+                color: AppColors.primaryColor,
+              ),
               const SizedBox(height: 24),
-              
+
               // 2. Judul Sapaan
               const Text(
                 'Resep Pintar',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.primaryTextColor),
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryTextColor,
+                ),
               ),
               const SizedBox(height: 8),
               const Text(
@@ -40,10 +48,8 @@ class LoginScreen extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: () => authController.loginWithGoogle(),
-                  icon: Image.network(
-                    'https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg',
-                    height: 24,
-                  ),
+                  // GANTI JADI GAMBAR LOKAL BIAR ANTI BADAI
+                  icon: Image.asset('assets/images/google.png', height: 24),
                   label: const Text('Masuk dengan Google'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,

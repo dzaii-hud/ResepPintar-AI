@@ -12,7 +12,20 @@
           "package_name": "com.example.reseppintar_ai"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "191900858378-vhre013ajs7fehlguddrp03qft5i6iis.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.reseppintar_ai",
+            "certificate_hash": "2d275e0be06650cde9f3d592519720c47e869468"
+          }
+        },
+        {
+          "client_id": "191900858378-juver7eeceqcmilg8lucig584sej06fo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCllX0FRpo7wM3T13lGe5rz3XG0YgGzJP4"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "191900858378-juver7eeceqcmilg8lucig584sej06fo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

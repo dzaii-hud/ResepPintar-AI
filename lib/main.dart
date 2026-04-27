@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart'; // Mengimpor package GetX yang baru kita install
+import 'package:get/get.dart';
+import 'package:firebase_core/firebase_core.dart'; // Wajib buat Firebase
 import 'screens/main_screen.dart';
+import 'screens/login_screen.dart';
 
-void main() {
-  // Fungsi main() adalah pintu masuk utama saat aplikasi dijalankan
+// Tambahin 'async' di sini
+void main() async {
+  // Dua baris ini hukumnya WAJIB sebelum runApp kalau pakai Firebase
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   runApp(const MyApp());
 }
 
@@ -12,15 +18,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Kita menggunakan GetMaterialApp, BUKAN MaterialApp biasa.
-    // Ini hukumnya wajib agar seluruh fitur canggih GetX (seperti pindah halaman,
-    // pop-up, dan state management) bisa menyala di seluruh aplikasi.
     return GetMaterialApp(
       title: 'ResepPintar AI',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.orange),
-      // Ubah bagian ini untuk memanggil file HomeScreen yang baru kita buat
-      home: MainScreen(),
+      // Nah, pintunya kita arahin ke LoginScreen di sini
+      home: const LoginScreen(),
     );
   }
 }
