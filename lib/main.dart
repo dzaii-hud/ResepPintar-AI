@@ -22,8 +22,18 @@ class MyApp extends StatelessWidget {
       title: 'ResepPintar AI',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.orange),
-      // Nah, pintunya kita arahin ke LoginScreen di sini
-      home: const LoginScreen(),
+
+      // 1. Kasih tau pintu masuk pertamanya ke mana
+      initialRoute: '/login',
+
+      // 2. Daftarin semua "peta" jalan aplikasi lu di sini
+      getPages: [
+        GetPage(name: '/login', page: () => const LoginScreen()),
+        GetPage(
+          name: '/home',
+          page: () => MainScreen(),
+        ), // Pastiin class lu namanya MainScreen
+      ],
     );
   }
 }

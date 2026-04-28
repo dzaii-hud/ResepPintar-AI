@@ -21,7 +21,7 @@ class RecipeController extends GetxController {
       isLoading(true);
       // Pastikan IP masih IP kosan lu
       var response = await http.get(
-        Uri.parse('http://192.168.0.232:8000/api/recipes'),
+        Uri.parse('http://172.20.2.189:8000/api/recipes'),
       );
 
       if (response.statusCode == 200) {

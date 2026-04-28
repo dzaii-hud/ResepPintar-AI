@@ -7,29 +7,40 @@ class AuthController extends GetxController {
   var userEmail = ''.obs;
   var userPhoto = ''.obs;
 
-  // ID KTP Web Client lu
   final String webClientId =
       '191900858378-juver7eeceqcmilg8lucig584sej06fo.apps.googleusercontent.com';
 
+  @override
+  void onInit() {
+    super.onInit();
+    // ATURAN BARU GOOGLE: Wajib dipanasin dulu mesinnya sebelum ngapa-ngapain
+    _initGoogle();
+  }
+
+  Future<void> _initGoogle() async {
+    // Masukin KTP lu di sini pakai initialize
+    await GoogleSignIn.instance.initialize(serverClientId: webClientId);
+  }
+
   Future<void> loginWithGoogle() async {
     try {
-      // PAKAI .instance BIAR KAGA MERAH LAGI
-      // Ini cara paling sakti di versi terbaru
-      final googleSignIn = GoogleSignIn.instance;
+      // THE MAGIC WORD: Sekarang pakainya authenticate(), BUKAN signIn() lagi!
+      final GoogleSignInAccount googleUser = await GoogleSignIn.instance
+          .authenticate();
 
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-
-      if (googleUser == null) return;
-
+      // Ambil datanya
       userName.value = googleUser.displayName ?? 'User';
       userEmail.value = googleUser.email;
       userPhoto.value = googleUser.photoUrl ?? '';
       isLoggedIn.value = true;
 
       print('MANTAP! Login sukses: ${userName.value}');
+
+      // Pindah halaman
       Get.offAllNamed('/home');
     } catch (error) {
-      print('Gagal login bre: $error');
+      // Kalau user mencet 'back' atau batalin login, bakal masuk ke catch sini
+      print('Gagal atau batal login bre: $error');
     }
   }
 
