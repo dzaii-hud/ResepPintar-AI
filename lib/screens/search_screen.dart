@@ -11,32 +11,37 @@ class SearchScreen extends StatelessWidget {
       backgroundColor: AppColors.backgroundColor,
 
       // AppBar sama seperti di Home
+      // --- TEMPEL INI DI BAGIAN appBar: ---
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        backgroundColor: Colors.transparent, // Latar transparan elegan
+        elevation: 0, // Hapus bayangan biar flat cakep
+        centerTitle: true, // INI YANG BIKIN KE TENGAH
         leading: IconButton(
-          icon: const Icon(Icons.menu, color: AppColors.primaryColor),
-          onPressed: () {},
+          icon: const Icon(
+            Icons.menu,
+            color: AppColors.primaryColor,
+          ), // Warna oranye utama
+          onPressed: () {}, // Nanti diisi logika drawer
         ),
         title: const Text(
-          'ResepPintar AI',
+          'Resep Pintar', // AI-nya dihapus, miringnya dihapus
           style: TextStyle(
             color: AppColors.primaryColor,
-            fontWeight: FontWeight.bold,
-            fontStyle: FontStyle.italic,
+            fontWeight: FontWeight.bold, // Cuma tebel aja
           ),
         ),
         actions: [
           IconButton(
             icon: const Icon(
               Icons.notifications_none,
-              color: AppColors.primaryTextColor,
+              color: AppColors.primaryTextColor, // Warna teks biasa
             ),
-            onPressed: () {},
+            onPressed: () {}, // Nanti diisi logika notifikasi
           ),
         ],
       ),
 
+      // ------------------------------------
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -134,24 +139,27 @@ class SearchScreen extends StatelessWidget {
 
               const SizedBox(height: 32),
 
-             
-             // --- BAGIAN 3: HASIL RESEP AI (OVERLAPPING) ---
+              // --- BAGIAN 3: HASIL RESEP AI (OVERLAPPING) ---
               Stack(
                 children: [
                   // 1. Gambar Latar Belakang
                   ClipRRect(
                     borderRadius: BorderRadius.circular(32),
                     child: Image.network(
-                      'https://images.unsplash.com/photo-1620601616428-2c2626b9a84a?q=80&w=1000&auto=format&fit=crop', 
+                      'https://images.unsplash.com/photo-1620601616428-2c2626b9a84a?q=80&w=1000&auto=format&fit=crop',
                       width: double.infinity,
                       height: 260,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
                           width: double.infinity,
-                          height: 260, 
-                          color: Colors.grey[300], 
-                          child: const Icon(Icons.broken_image, size: 50, color: Colors.grey)
+                          height: 260,
+                          color: Colors.grey[300],
+                          child: const Icon(
+                            Icons.broken_image,
+                            size: 50,
+                            color: Colors.grey,
+                          ),
                         );
                       },
                     ),
@@ -181,49 +189,98 @@ class SearchScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFC8E6C9),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Text(
                                 'RESEP KILAT AI',
-                                style: TextStyle(color: Color(0xFF2E7D32), fontWeight: FontWeight.bold, fontSize: 10, letterSpacing: 1),
+                                style: TextStyle(
+                                  color: Color(0xFF2E7D32),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10,
+                                  letterSpacing: 1,
+                                ),
                               ),
                             ),
-                            const Icon(Icons.favorite_border, color: AppColors.primaryColor),
+                            const Icon(
+                              Icons.favorite_border,
+                              color: AppColors.primaryColor,
+                            ),
                           ],
                         ),
-                        
+
                         const SizedBox(height: 16),
-                        
+
                         const Text(
                           'Orak-Arik Sosis Istimewa',
-                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: AppColors.primaryTextColor, height: 1.2),
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w900,
+                            color: AppColors.primaryTextColor,
+                            height: 1.2,
+                          ),
                         ),
-                        
+
                         const SizedBox(height: 12),
-                        
+
                         Row(
                           children: const [
-                            Icon(Icons.timer_outlined, size: 16, color: AppColors.secondaryTextColor),
+                            Icon(
+                              Icons.timer_outlined,
+                              size: 16,
+                              color: AppColors.secondaryTextColor,
+                            ),
                             SizedBox(width: 6),
-                            Text('10 MENIT', style: TextStyle(color: AppColors.secondaryTextColor, fontSize: 12, fontWeight: FontWeight.bold)),
+                            Text(
+                              '10 MENIT',
+                              style: TextStyle(
+                                color: AppColors.secondaryTextColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             SizedBox(width: 16),
-                            Icon(Icons.restaurant, size: 16, color: AppColors.secondaryTextColor),
+                            Icon(
+                              Icons.restaurant,
+                              size: 16,
+                              color: AppColors.secondaryTextColor,
+                            ),
                             SizedBox(width: 6),
-                            Text('MUDAH', style: TextStyle(color: AppColors.secondaryTextColor, fontSize: 12, fontWeight: FontWeight.bold)),
+                            Text(
+                              'MUDAH',
+                              style: TextStyle(
+                                color: AppColors.secondaryTextColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ],
                         ),
-                        
+
                         const SizedBox(height: 24),
 
                         // --- SUB-BAGIAN: BAHAN ---
                         Row(
                           children: [
-                            Container(width: 4, height: 18, color: AppColors.primaryColor),
+                            Container(
+                              width: 4,
+                              height: 18,
+                              color: AppColors.primaryColor,
+                            ),
                             const SizedBox(width: 8),
-                            const Text('Bahan', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.primaryTextColor)),
+                            const Text(
+                              'Bahan',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primaryTextColor,
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -234,9 +291,19 @@ class SearchScreen extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: const [
-                                  Text('• 2 Butir Telur', style: TextStyle(color: AppColors.secondaryTextColor)),
+                                  Text(
+                                    '• 2 Butir Telur',
+                                    style: TextStyle(
+                                      color: AppColors.secondaryTextColor,
+                                    ),
+                                  ),
                                   SizedBox(height: 8),
-                                  Text('• Bawang Merah', style: TextStyle(color: AppColors.secondaryTextColor)),
+                                  Text(
+                                    '• Bawang Merah',
+                                    style: TextStyle(
+                                      color: AppColors.secondaryTextColor,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -244,9 +311,19 @@ class SearchScreen extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: const [
-                                  Text('• 3 Buah Sosis', style: TextStyle(color: AppColors.secondaryTextColor)),
+                                  Text(
+                                    '• 3 Buah Sosis',
+                                    style: TextStyle(
+                                      color: AppColors.secondaryTextColor,
+                                    ),
+                                  ),
                                   SizedBox(height: 8),
-                                  Text('• Garam & Lada', style: TextStyle(color: AppColors.secondaryTextColor)),
+                                  Text(
+                                    '• Garam & Lada',
+                                    style: TextStyle(
+                                      color: AppColors.secondaryTextColor,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -258,41 +335,97 @@ class SearchScreen extends StatelessWidget {
                         // --- SUB-BAGIAN: CARA MASAK ---
                         Row(
                           children: [
-                            Container(width: 4, height: 18, color: AppColors.primaryColor),
+                            Container(
+                              width: 4,
+                              height: 18,
+                              color: AppColors.primaryColor,
+                            ),
                             const SizedBox(width: 8),
-                            const Text('Cara Masak', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.primaryTextColor)),
+                            const Text(
+                              'Cara Masak',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primaryTextColor,
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 16),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: const [
-                            Text('01', style: TextStyle(color: AppColors.primaryColor, fontWeight: FontWeight.bold, fontSize: 16)),
+                            Text(
+                              '01',
+                              style: TextStyle(
+                                color: AppColors.primaryColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
                             SizedBox(width: 12),
-                            Expanded(child: Text('Iris sosis dan bawang merah tipis-tipis. Kocok lepas telur dengan sedikit garam.', style: TextStyle(color: AppColors.secondaryTextColor, height: 1.5))),
+                            Expanded(
+                              child: Text(
+                                'Iris sosis dan bawang merah tipis-tipis. Kocok lepas telur dengan sedikit garam.',
+                                style: TextStyle(
+                                  color: AppColors.secondaryTextColor,
+                                  height: 1.5,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 12),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: const [
-                            Text('02', style: TextStyle(color: AppColors.primaryColor, fontWeight: FontWeight.bold, fontSize: 16)),
+                            Text(
+                              '02',
+                              style: TextStyle(
+                                color: AppColors.primaryColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
                             SizedBox(width: 12),
-                            Expanded(child: Text('Tumis bawang hingga harum, masukkan sosis, masak sebentar hingga sedikit kecokelatan.', style: TextStyle(color: AppColors.secondaryTextColor, height: 1.5))),
+                            Expanded(
+                              child: Text(
+                                'Tumis bawang hingga harum, masukkan sosis, masak sebentar hingga sedikit kecokelatan.',
+                                style: TextStyle(
+                                  color: AppColors.secondaryTextColor,
+                                  height: 1.5,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 12),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: const [
-                            Text('03', style: TextStyle(color: AppColors.primaryColor, fontWeight: FontWeight.bold, fontSize: 16)),
+                            Text(
+                              '03',
+                              style: TextStyle(
+                                color: AppColors.primaryColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
                             SizedBox(width: 12),
-                            Expanded(child: Text('Tuang telur, biarkan sebentar lalu orak-arik pelan. Sajikan selagi hangat!', style: TextStyle(color: AppColors.secondaryTextColor, height: 1.5))),
+                            Expanded(
+                              child: Text(
+                                'Tuang telur, biarkan sebentar lalu orak-arik pelan. Sajikan selagi hangat!',
+                                style: TextStyle(
+                                  color: AppColors.secondaryTextColor,
+                                  height: 1.5,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
 
                         const SizedBox(height: 32),
-                        
+
                         // Tombol Mulai Memasak
                         SizedBox(
                           width: double.infinity,
@@ -301,10 +434,19 @@ class SearchScreen extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primaryColor,
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
                               elevation: 0,
                             ),
-                            child: const Text('Mulai Memasak Sekarang', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                            child: const Text(
+                              'Mulai Memasak Sekarang',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -312,7 +454,7 @@ class SearchScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 32),
 
               // --- BAGIAN 4: SARAN TAMBAHAN (DI LUAR KARTU PUTIH) ---
@@ -321,24 +463,42 @@ class SearchScreen extends StatelessWidget {
                 width: double.infinity,
                 child: const Text(
                   'Saran Tambahan',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primaryTextColor),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryTextColor,
+                  ),
                   textAlign: TextAlign.left,
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               // Baris Pertama (Pakcoy & Cabai)
               Row(
                 children: [
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      decoration: BoxDecoration(color: const Color(0xFFD6E8FF), borderRadius: BorderRadius.circular(24)),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD6E8FF),
+                        borderRadius: BorderRadius.circular(24),
+                      ),
                       child: Column(
                         children: const [
-                          Icon(Icons.eco_outlined, color: AppColors.primaryColor),
+                          Icon(
+                            Icons.eco_outlined,
+                            color: AppColors.primaryColor,
+                          ),
                           SizedBox(height: 8),
-                          Text('PAKCOY', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1, color: AppColors.primaryTextColor)),
+                          Text(
+                            'PAKCOY',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                              color: AppColors.primaryTextColor,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -347,12 +507,26 @@ class SearchScreen extends StatelessWidget {
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      decoration: BoxDecoration(color: const Color(0xFFD6E8FF), borderRadius: BorderRadius.circular(24)),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD6E8FF),
+                        borderRadius: BorderRadius.circular(24),
+                      ),
                       child: Column(
                         children: const [
-                          Icon(Icons.local_fire_department_outlined, color: AppColors.primaryColor),
+                          Icon(
+                            Icons.local_fire_department_outlined,
+                            color: AppColors.primaryColor,
+                          ),
                           SizedBox(height: 8),
-                          Text('CABAI RAWIT', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1, color: AppColors.primaryTextColor)),
+                          Text(
+                            'CABAI RAWIT',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                              color: AppColors.primaryTextColor,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -360,19 +534,30 @@ class SearchScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              
+
               // Baris Kedua (Kecap & Keju)
               Row(
                 children: [
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      decoration: BoxDecoration(color: const Color(0xFFD6E8FF), borderRadius: BorderRadius.circular(24)),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD6E8FF),
+                        borderRadius: BorderRadius.circular(24),
+                      ),
                       child: Column(
                         children: const [
                           Icon(Icons.restaurant, color: AppColors.primaryColor),
                           SizedBox(height: 8),
-                          Text('KECAP MANIS', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1, color: AppColors.primaryTextColor)),
+                          Text(
+                            'KECAP MANIS',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                              color: AppColors.primaryTextColor,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -381,19 +566,32 @@ class SearchScreen extends StatelessWidget {
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      decoration: BoxDecoration(color: const Color(0xFFD6E8FF), borderRadius: BorderRadius.circular(24)),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD6E8FF),
+                        borderRadius: BorderRadius.circular(24),
+                      ),
                       child: Column(
                         children: const [
-                          Icon(Icons.lunch_dining, color: AppColors.primaryColor),
+                          Icon(
+                            Icons.lunch_dining,
+                            color: AppColors.primaryColor,
+                          ),
                           SizedBox(height: 8),
-                          Text('KEJU', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1, color: AppColors.primaryTextColor)),
+                          Text(
+                            'KEJU',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                              color: AppColors.primaryTextColor,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
                 ],
               ),
-
             ],
           ),
         ),

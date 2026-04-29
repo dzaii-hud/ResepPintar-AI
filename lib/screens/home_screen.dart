@@ -95,6 +95,7 @@ class HomeScreen extends StatelessWidget {
 
               // --- REVISI 3: TEKS SEARCH BAR DIGANTI ---
               TextField(
+                onChanged: (value) => controller.updateSearchQuery(value),
                 decoration: InputDecoration(
                   hintText:
                       'Cari menu, resep, atau bahan...', // Diganti sesuai request lu

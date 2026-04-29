@@ -20,31 +20,36 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
+      // --- TEMPEL INI DI BAGIAN appBar: ---
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        backgroundColor: Colors.transparent, // Latar transparan elegan
+        elevation: 0, // Hapus bayangan biar flat cakep
+        centerTitle: true, // INI YANG BIKIN KE TENGAH
         leading: IconButton(
-          icon: const Icon(Icons.menu, color: AppColors.primaryColor),
-          onPressed: () {},
+          icon: const Icon(
+            Icons.menu,
+            color: AppColors.primaryColor,
+          ), // Warna oranye utama
+          onPressed: () {}, // Nanti diisi logika drawer
         ),
         title: const Text(
-          'ResepPintar AI',
+          'Resep Pintar', // AI-nya dihapus, miringnya dihapus
           style: TextStyle(
             color: AppColors.primaryColor,
-            fontWeight: FontWeight.bold,
-            fontStyle: FontStyle.italic,
+            fontWeight: FontWeight.bold, // Cuma tebel aja
           ),
         ),
         actions: [
           IconButton(
             icon: const Icon(
               Icons.notifications_none,
-              color: AppColors.primaryTextColor,
+              color: AppColors.primaryTextColor, // Warna teks biasa
             ),
-            onPressed: () {},
+            onPressed: () {}, // Nanti diisi logika notifikasi
           ),
         ],
       ),
+      // ------------------------------------
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -134,8 +139,13 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   color: const Color(0xFFEDF2F7),
                   borderRadius: BorderRadius.circular(30),
                 ),
-                child: const TextField(
-                  decoration: InputDecoration(
+                child: TextField(
+                  // <-- Kata 'const' di sini udah gw hapus
+                  // INI KABEL SENSORNYA BRE:
+                  onChanged: (value) => controller.updateSearchQuery(value),
+
+                  decoration: const InputDecoration(
+                    // <-- Kata 'const' gw pindahin ke sini biar tetep enteng
                     icon: Icon(Icons.search, color: Colors.grey),
                     hintText: 'Search your favorites...',
                     hintStyle: TextStyle(color: Colors.grey),
