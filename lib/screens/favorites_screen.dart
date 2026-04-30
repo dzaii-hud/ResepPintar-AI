@@ -334,11 +334,30 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                       color: Colors.white,
                                       shape: BoxShape.circle,
                                     ),
-                                    child: const Icon(
-                                      Icons.favorite,
-                                      color: Color(0xFFD32F2F),
-                                      size: 20,
-                                    ),
+                                    child: Obx(() {
+                                      // Cek apakah resep ini ada di daftar love
+                                      bool isFav = controller.favoriteIds
+                                          .contains(recipe['id']);
+
+                                      return GestureDetector(
+                                        onTap: () {
+                                          // Pas icon dipencet, hapus/tambah dari favorit
+                                          controller.toggleFavorite(
+                                            recipe['id'],
+                                          );
+                                        },
+                                        child: Icon(
+                                          isFav
+                                              ? Icons.favorite
+                                              : Icons.favorite_border,
+                                          color: isFav
+                                              ? const Color(0xFFD32F2F)
+                                              : Colors
+                                                    .grey, // Merah kalau dilove, abu kalau dilepas
+                                          size: 20,
+                                        ),
+                                      );
+                                    }),
                                   ),
                                 ),
                               ],

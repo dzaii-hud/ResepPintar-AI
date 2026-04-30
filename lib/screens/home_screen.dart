@@ -480,13 +480,30 @@ class HomeScreen extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.favorite_border,
-                                color: AppColors.primaryColor,
-                              ),
-                              onPressed: () {},
-                            ),
+                            // KODINGAN BARU (PASTE INI)
+                            Obx(() {
+                              // Cek apakah ID resep ini ada di dalam list favorit di controller
+                              bool isFav = controller.favoriteIds.contains(
+                                recipe['id'],
+                              );
+
+                              return IconButton(
+                                icon: Icon(
+                                  isFav
+                                      ? Icons.favorite
+                                      : Icons
+                                            .favorite_border, // Kalau isFav true, hatinya full. Kalau false, hatinya bolong.
+                                  color: isFav
+                                      ? Colors.red
+                                      : AppColors
+                                            .primaryColor, // Kalau isFav true warnanya merah
+                                ),
+                                onPressed: () {
+                                  // Pas dipencet, kirim ID resepnya ke controller buat disimpen/dihapus
+                                  controller.toggleFavorite(recipe['id']);
+                                },
+                              );
+                            }),
                           ],
                         ),
                       ),

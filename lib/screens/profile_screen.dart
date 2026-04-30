@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../utils/app_colors.dart';
 import '../controllers/auth_controller.dart'; // Pastikan path ini benar
+import '../controllers/recipe_controller.dart';
 
 class ProfileScreen extends StatelessWidget {
   // Hapus 'const' di sini karena kita manggil controller
@@ -210,14 +211,22 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        '124',
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w900,
-                          color: AppColors.primaryColor,
-                        ),
-                      ),
+                      // =======================================
+                      // INI YANG BERUBAH JADI DINAMIS BRE
+                      // =======================================
+                      Obx(() {
+                        final recipeController = Get.find<RecipeController>();
+                        return Text(
+                          '${recipeController.favoriteCount}', // Bakal nampilin jumlah riil resep yg dilove
+                          style: const TextStyle(
+                            // Kata const-nya gw pindahin ke sini biar aman
+                            fontSize: 32,
+                            fontWeight: FontWeight.w900,
+                            color: AppColors.primaryColor,
+                          ),
+                        );
+                      }),
+                      // =======================================
                       const SizedBox(height: 4),
                       const Text(
                         'SAVED RECIPES',
@@ -230,7 +239,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 24),
                       const Text(
-                        '12',
+                        '12', // Ini biarin aja dulu statis karena AI Prompts-nya belum kita bikin
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.w900,

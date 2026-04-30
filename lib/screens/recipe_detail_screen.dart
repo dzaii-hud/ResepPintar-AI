@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../utils/app_colors.dart';
+import '../controllers/recipe_controller.dart';
 
 class RecipeDetailScreen extends StatelessWidget {
   const RecipeDetailScreen({super.key});
@@ -43,6 +44,45 @@ class RecipeDetailScreen extends StatelessWidget {
                 onPressed: () => Get.back(),
               ),
             ),
+
+            // ==========================================
+            // INI DIA TAMBAHAN TOMBOL LOVE-NYA BRE
+            // ==========================================
+            actions: [
+              Container(
+                margin: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(
+                    0.8,
+                  ), // Background putih transparan biar seragam
+                  shape: BoxShape.circle,
+                ),
+                child: Obx(() {
+                  // Panggil controller langsung di sini
+                  final controller = Get.find<RecipeController>();
+
+                  // Cek apakah resep ini udah ada di memori favorit
+                  bool isFav = controller.favoriteIds.contains(recipe['id']);
+
+                  return IconButton(
+                    icon: Icon(
+                      isFav ? Icons.favorite : Icons.favorite_border,
+                      color: isFav
+                          ? Colors.red
+                          : Colors
+                                .grey[700], // Merah kalau dilove, abu gelap kalau belum
+                      size: 24,
+                    ),
+                    onPressed: () {
+                      // Eksekusi fungsi toggle pas dipencet
+                      controller.toggleFavorite(recipe['id']);
+                    },
+                  );
+                }),
+              ),
+            ],
+
+            // ==========================================
             flexibleSpace: FlexibleSpaceBar(
               background: recipe['image_url'] != null
                   ? Image.asset(

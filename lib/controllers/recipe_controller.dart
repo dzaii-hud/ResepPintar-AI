@@ -6,11 +6,34 @@ class RecipeController extends GetxController {
   var recipes = [].obs;
   var isLoading = true.obs;
 
-  // 1. TAMBAHIN INI: Variabel buat nampung teks yang diketik user
   var searchQuery = ''.obs;
-
   var selectedHomeFilter = 'Semua'.obs;
   var selectedFavFilter = 'Semua Resep'.obs;
+
+  // ==========================================
+  // FITUR FAVORITE (LOVE) BARU DITAMBAHIN SINI
+  // ==========================================
+  var favoriteIds = <int>[].obs; // Nyimpen ID resep yg di-love
+
+  // Fungsi buat nambah/hapus love
+  void toggleFavorite(int recipeId) {
+    if (favoriteIds.contains(recipeId)) {
+      favoriteIds.remove(recipeId);
+    } else {
+      favoriteIds.add(recipeId);
+    }
+  }
+
+  // Buat ngitung jumlah resep yg di-love (Buat di Halaman Profile)
+  int get favoriteCount => favoriteIds.length;
+
+  // Buat ngambil data lengkap resep yg di-love (Buat UI Card Gede nanti)
+  List get onlyFavoriteRecipes {
+    return recipes
+        .where((recipe) => favoriteIds.contains(recipe['id']))
+        .toList();
+  }
+  // ==========================================
 
   @override
   void onInit() {
@@ -18,7 +41,6 @@ class RecipeController extends GetxController {
     super.onInit();
   }
 
-  // 2. TAMBAHIN INI: Fungsi buat update teks pencarian dari keyboard
   void updateSearchQuery(String query) {
     searchQuery.value = query;
   }
@@ -26,9 +48,8 @@ class RecipeController extends GetxController {
   void fetchRecipes() async {
     try {
       isLoading(true);
-      // Ganti IP sesuai IP laptop lu kalau ganti jaringan
       var response = await http.get(
-        Uri.parse('http://192.168.0.232:8000/api/recipes'),
+        Uri.parse('http://172.20.3.156:8000/api/recipes'),
       );
 
       if (response.statusCode == 200) {
@@ -51,27 +72,21 @@ class RecipeController extends GetxController {
     }
   }
 
-  // 3. LOGIKA FILTER HOME (Sekarang support Kategori + Search)
+  // LOGIKA FILTER HOME
   List get filteredHomeRecipes {
     List filtered = recipes.toList();
 
-    // A. Filter berdasarkan tombol kategori (Sarapan, dll)
     if (selectedHomeFilter.value != 'Semua') {
       filtered = filtered
           .where((recipe) => recipe['meal_time'] == selectedHomeFilter.value)
           .toList();
     }
 
-    // B. Filter berdasarkan Search (Menu, Resep, atau Bahan)
     if (searchQuery.value.isNotEmpty) {
       var query = searchQuery.value.toLowerCase();
       filtered = filtered.where((recipe) {
-        // Nyari di Nama Masakan
         var title = (recipe['title'] ?? '').toString().toLowerCase();
-        // Nyari di Waktu Makan (Menu)
         var mealTime = (recipe['meal_time'] ?? '').toString().toLowerCase();
-        // Nyari di Bahan-bahan
-        // PENTING: Pastiin di Laravel nama field-nya 'ingredients' atau ganti sesuai field lu
         var ingredients = (recipe['ingredients'] ?? '')
             .toString()
             .toLowerCase();
@@ -85,19 +100,19 @@ class RecipeController extends GetxController {
     return filtered;
   }
 
-  // --- LOGIKA FILTER FAVORITES (Sekarang support Kesulitan + Search) ---
+  // --- LOGIKA FILTER FAVORITES ---
   List get filteredFavRecipes {
-    // 1. Ambil data mentah jadi List biasa
-    List filtered = recipes.toList();
+    // PERUBAHAN PENTING: Sekarang dia ngambil dari resep yg di-love aja, BUKAN semua resep!
+    List filtered = onlyFavoriteRecipes.toList();
 
-    // 2. Filter berdasarkan tingkat kesulitan (Mudah, Sedang, Susah)
+    // Filter Mudah/Sedang/Susah
     if (selectedFavFilter.value != 'Semua Resep') {
       filtered = filtered
           .where((recipe) => recipe['difficulty'] == selectedFavFilter.value)
           .toList();
     }
 
-    // 3. Filter berdasarkan Search (biar bisa nyari nama/bahan di halaman favorite)
+    // Filter dari Search Bar
     if (searchQuery.value.isNotEmpty) {
       var query = searchQuery.value.toLowerCase();
       filtered = filtered.where((recipe) {
