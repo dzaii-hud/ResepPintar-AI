@@ -56,7 +56,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // --- BAGIAN 1: HEADER TEXT ---
+              // --- BAGIAN 1: HEADER TEXT & SLIDER VIP ---
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(28.0),
@@ -86,49 +86,139 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         height: 1.2,
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    RichText(
-                      text: TextSpan(
-                        style: const TextStyle(
-                          fontSize: 15,
-                          color: AppColors.secondaryTextColor,
-                          height: 1.5,
-                        ),
-                        children: [
-                          const TextSpan(
-                            text:
-                                'Every kitchen has its secrets.\nRevisit the flavors you love and\nthe recipes that ',
+                    const SizedBox(
+                      height: 24,
+                    ), // Jarak pengganti teks yang dihapus
+                    // ==========================================
+                    // START: SLIDER VIP RESEP FAVORIT
+                    // ==========================================
+                    Obx(() {
+                      final favRecipes = controller.onlyFavoriteRecipes;
+
+                      // Tampilan kalau belum ada resep yang di-love
+                      if (favRecipes.isEmpty) {
+                        return Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(
+                              0.6,
+                            ), // Transparan dikit nyatu sama biru
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          WidgetSpan(
-                            alignment: PlaceholderAlignment.middle,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF3B82F6),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: const Text(
-                                'made',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                          child: const Text(
+                            'Belum ada resep VIP.\nCari resep favoritmu dan pencet tombol hatinya!',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontStyle: FontStyle.italic,
                             ),
                           ),
-                          const TextSpan(text: ' your\ntable unforgettable.'),
-                        ],
-                      ),
-                    ),
+                        );
+                      }
+
+                      // Tampilan Card Slider kalau ada isinya
+                      return SizedBox(
+                        height:
+                            200, // Tinggi udah disesuaikan biar proporsional di dalam kotak biru
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: favRecipes.length,
+                          itemBuilder: (context, index) {
+                            var recipe = favRecipes[index];
+                            return GestureDetector(
+                              onTap: () => Get.to(
+                                () => const RecipeDetailScreen(),
+                                arguments: recipe,
+                              ),
+                              child: Container(
+                                width:
+                                    220, // Lebarnya dibikin pas buat di-swipe
+                                margin: const EdgeInsets.only(right: 16),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(24),
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                      recipe['image_url'] ??
+                                          'assets/images/default.jpeg',
+                                    ),
+                                    fit: BoxFit.cover,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(24),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.bottomCenter,
+                                      end: Alignment.topCenter,
+                                      colors: [
+                                        Colors.black.withOpacity(0.8),
+                                        Colors.transparent,
+                                      ],
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 6,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primaryColor,
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          recipe['difficulty'] ?? 'Mudah',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 1,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        recipe['title'] ?? 'Nama Resep',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w900,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    }),
+                    // ==========================================
+                    // END: SLIDER VIP RESEP FAVORIT
+                    // ==========================================
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
-
+              const SizedBox(height: 32), // Jarak sebelum Search Bar
               // --- BAGIAN 2: SEARCH BAR ---
               Container(
                 padding: const EdgeInsets.symmetric(
