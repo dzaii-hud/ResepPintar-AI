@@ -8,7 +8,7 @@ import 'profile_screen.dart';
 
 // Import halaman-halaman yang udah kita bikin
 import 'home_screen.dart';
-import 'search_screen.dart';
+import 'ai_chef_screen.dart';
 
 class MainScreen extends StatelessWidget {
   MainScreen({super.key});
@@ -19,7 +19,7 @@ class MainScreen extends StatelessWidget {
   // Ini ibarat Route di Laravel. Array berisi halaman apa aja yang mau ditampilin.
   final List<Widget> pages = [
     const HomeScreen(),
-    const SearchScreen(),
+    const AiChefScreen(),
     const FavoritesScreen(),
     ProfileScreen(),
   ];
@@ -68,9 +68,14 @@ class MainScreen extends StatelessWidget {
                 label: 'HOME',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.search),
-                activeIcon: Icon(Icons.search, size: 28),
-                label: 'SEARCH',
+                icon: Icon(
+                  Icons.smart_toy_outlined,
+                ), // Icon robot garis-garis pas lagi ga dipilih
+                activeIcon: Icon(
+                  Icons.smart_toy,
+                  size: 28,
+                ), // Icon robot tebal pas lagi diklik
+                label: 'AI CHEF',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.favorite_border),
