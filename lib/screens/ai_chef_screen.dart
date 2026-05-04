@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reseppintar_ai/utils/app_colors.dart'; // Sesuaikan path-nya ya
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class AiChefScreen extends StatefulWidget {
   const AiChefScreen({super.key});
@@ -8,35 +10,139 @@ class AiChefScreen extends StatefulWidget {
   State<AiChefScreen> createState() => _AiChefScreenState();
 }
 
-class _AiChefScreenState extends State<AiChefScreen> {
+// 1. Tambahin "with AutomaticKeepAliveClientMixin" di sini biar kaga pikun
+class _AiChefScreenState extends State<AiChefScreen>
+    with AutomaticKeepAliveClientMixin {
   final TextEditingController _chatController = TextEditingController();
+  bool _isLoading = false;
 
-  final List<Map<String, dynamic>> _messages = [
-    {
-      'isUser': false,
-      'text':
-          "Halo Chef! 👨‍🍳\nAda bahan apa aja di kulkas hari ini? Biar aku bantu racikin resep rahasianya!",
-    },
-  ];
+  // Variabel buat nampung chat
+  List<Map<String, dynamic>> _messages = [];
 
-  void _sendMessage() {
-    if (_chatController.text.trim().isEmpty) return;
+  // 2. Ini wajib di-set "true" biar memori layarnya dipertahankan
+  @override
+  bool get wantKeepAlive => true;
 
-    setState(() {
-      _messages.add({'isUser': true, 'text': _chatController.text.trim()});
-      _chatController.clear();
-    });
+  @override
+  void initState() {
+    super.initState();
+    // Panggil pesan sambutan pertama kali
+    _setInitialMessage();
+  }
+
+  void _setInitialMessage() {
+    _messages = [
+      {
+        'isUser': false,
+        'text':
+            "Halo Chef! 👨‍🍳\nAda bahan apa aja di kulkas hari ini? Biar aku bantu racikin resep rahasianya!",
+      },
+    ];
   }
 
   // ==========================================
-  // FUNGSI BUAT MUNCULIN POP-UP EDIT PESAN
+  // FUNGSI BUAT TOMBOL SAPU JAGAT (CLEAR CHAT)
   // ==========================================
+  void _clearChat() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFFFCF8F3),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text(
+          "Mulai Sesi Baru?",
+          style: TextStyle(
+            color: Color(0xFF4A3728),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: const Text(
+          "Semua obrolan resep di atas bakal dibersihkan. Lanjut?",
+          style: TextStyle(color: Color(0xFF4A3728)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context), // Tutup pop-up
+            child: const Text("Batal", style: TextStyle(color: Colors.grey)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            onPressed: () {
+              setState(() {
+                _setInitialMessage(); // Balikin ke pesan pertama alias reset
+              });
+              Navigator.pop(context); // Tutup pop-up
+            },
+            child: const Text(
+              "Bersihkan",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _sendMessage() async {
+    final text = _chatController.text.trim();
+    if (text.isEmpty) return;
+
+    setState(() {
+      _messages.add({'isUser': true, 'text': text});
+      _chatController.clear();
+      _isLoading = true;
+    });
+
+    // IP Laptop lu yang udah disesuaikan
+    final String apiUrl = 'http://172.20.2.74:8000/api/ai-chef';
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({'message': text}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          _messages.add({'isUser': false, 'text': data['reply']});
+        });
+      } else {
+        setState(() {
+          _messages.add({
+            'isUser': false,
+            'text':
+                'Waduh, server Laravel-nya error nih bre. Status: ${response.statusCode}',
+          });
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _messages.add({
+          'isUser': false,
+          'text': 'Gagal nyambung ke dapur. Cek koneksi lu ya!\nError: $e',
+        });
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   void _editMessageDialog(int index) {
-    // Kita bikin controller baru khusus buat dialog edit, diisi teks yang lama
     TextEditingController editController = TextEditingController(
       text: _messages[index]['text'],
     );
-
     showDialog(
       context: context,
       builder: (context) {
@@ -54,7 +160,7 @@ class _AiChefScreenState extends State<AiChefScreen> {
           ),
           content: TextField(
             controller: editController,
-            maxLines: null, // Biar bisa banyak baris kalau pesannya panjang
+            maxLines: null,
             style: const TextStyle(color: Color(0xFF4A3728)),
             decoration: InputDecoration(
               focusedBorder: OutlineInputBorder(
@@ -74,8 +180,7 @@ class _AiChefScreenState extends State<AiChefScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () =>
-                  Navigator.pop(context), // Tutup pop-up kalau batal
+              onPressed: () => Navigator.pop(context),
               child: const Text("Batal", style: TextStyle(color: Colors.grey)),
             ),
             ElevatedButton(
@@ -86,10 +191,9 @@ class _AiChefScreenState extends State<AiChefScreen> {
                 ),
               ),
               onPressed: () {
-                // Update teksnya dan tutup pop-up
-                setState(() {
-                  _messages[index]['text'] = editController.text.trim();
-                });
+                setState(
+                  () => _messages[index]['text'] = editController.text.trim(),
+                );
                 Navigator.pop(context);
               },
               child: const Text(
@@ -111,6 +215,9 @@ class _AiChefScreenState extends State<AiChefScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // 3. Wajib panggil ini di dalam build kalau pakai AutomaticKeepAliveClientMixin
+    super.build(context);
+
     return Scaffold(
       backgroundColor: const Color(0xFFFCF8F3),
       appBar: AppBar(
@@ -130,6 +237,18 @@ class _AiChefScreenState extends State<AiChefScreen> {
             ),
           ],
         ),
+        actions: [
+          // 4. Tombol Sapu Jagat (Refresh / Clear)
+          IconButton(
+            icon: const Icon(
+              Icons.cleaning_services_rounded,
+              color: AppColors.primaryColor,
+            ),
+            tooltip: 'Bersihkan Obrolan',
+            onPressed: _clearChat,
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: Column(
         children: [
@@ -137,20 +256,58 @@ class _AiChefScreenState extends State<AiChefScreen> {
             child: ListView.builder(
               padding: const EdgeInsets.all(20),
               physics: const BouncingScrollPhysics(),
-              itemCount: _messages.length,
+              itemCount: _messages.length + (_isLoading ? 1 : 0),
               itemBuilder: (context, index) {
+                if (index == _messages.length && _isLoading) {
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                          bottomRight: Radius.circular(20),
+                          bottomLeft: Radius.circular(4),
+                        ),
+                        border: Border.all(
+                          color: AppColors.primaryColor.withOpacity(0.3),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Text(
+                            "Chef AI sedang meracik resep...",
+                            style: TextStyle(
+                              color: Color(0xFF4A3728),
+                              fontSize: 13,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
                 final msg = _messages[index];
                 final isUser = msg['isUser'];
 
-                // ==========================================
-                // BUBBLE CHAT DIBUNGKUS GESTURE DETECTOR
-                // ==========================================
                 return GestureDetector(
                   onLongPress: () {
-                    // Cuma pesan user (isUser == true) yang bisa diedit
-                    if (isUser) {
-                      _editMessageDialog(index);
-                    }
+                    if (isUser) _editMessageDialog(index);
                   },
                   child: Align(
                     alignment: isUser
@@ -238,7 +395,9 @@ class _AiChefScreenState extends State<AiChefScreen> {
                             vertical: 14,
                           ),
                         ),
-                        onSubmitted: (value) => _sendMessage(),
+                        onSubmitted: (value) {
+                          if (!_isLoading) _sendMessage();
+                        },
                       ),
                     ),
                   ),
@@ -249,12 +408,21 @@ class _AiChefScreenState extends State<AiChefScreen> {
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      icon: const Icon(
-                        Icons.send_rounded,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                      onPressed: _sendMessage,
+                      icon: _isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Icon(
+                              Icons.send_rounded,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                      onPressed: _isLoading ? null : _sendMessage,
                     ),
                   ),
                 ],
