@@ -11,11 +11,10 @@ class RecipeController extends GetxController {
   var selectedFavFilter = 'Semua Resep'.obs;
 
   // ==========================================
-  // FITUR FAVORITE (LOVE) BARU DITAMBAHIN SINI
+  // FITUR FAVORITE (LOVE)
   // ==========================================
-  var favoriteIds = <int>[].obs; // Nyimpen ID resep yg di-love
+  var favoriteIds = <int>[].obs;
 
-  // Fungsi buat nambah/hapus love
   void toggleFavorite(int recipeId) {
     if (favoriteIds.contains(recipeId)) {
       favoriteIds.remove(recipeId);
@@ -24,15 +23,29 @@ class RecipeController extends GetxController {
     }
   }
 
-  // Buat ngitung jumlah resep yg di-love (Buat di Halaman Profile)
   int get favoriteCount => favoriteIds.length;
 
-  // Buat ngambil data lengkap resep yg di-love (Buat UI Card Gede nanti)
   List get onlyFavoriteRecipes {
     return recipes
         .where((recipe) => favoriteIds.contains(recipe['id']))
         .toList();
   }
+
+  // ==========================================
+  // FITUR KHUSUS RESEP AI (BARU DITAMBAHIN BRE!)
+  // ==========================================
+
+  // Ambil list resep yang murni buatan AI aja (ada emoji 🤖 di judulnya)
+  List get onlyAiRecipes {
+    return recipes.where((recipe) {
+      String title = (recipe['title'] ?? '').toString();
+      return title.contains('🤖');
+    }).toList();
+  }
+
+  // Ngitung jumlah resep AI yang udah lu save
+  int get aiRecipeCount => onlyAiRecipes.length;
+
   // ==========================================
 
   @override
@@ -48,8 +61,9 @@ class RecipeController extends GetxController {
   void fetchRecipes() async {
     try {
       isLoading(true);
+      // PENTING: Pastiin IP ini bener dan sama kayak yang di fitur delete ya bre!
       var response = await http.get(
-        Uri.parse('http://172.20.2.74:8000/api/recipes'),
+        Uri.parse('http://192.168.0.232:8000/api/recipes'),
       );
 
       if (response.statusCode == 200) {
@@ -102,17 +116,14 @@ class RecipeController extends GetxController {
 
   // --- LOGIKA FILTER FAVORITES ---
   List get filteredFavRecipes {
-    // PERUBAHAN PENTING: Sekarang dia ngambil dari resep yg di-love aja, BUKAN semua resep!
     List filtered = onlyFavoriteRecipes.toList();
 
-    // Filter Mudah/Sedang/Susah
     if (selectedFavFilter.value != 'Semua Resep') {
       filtered = filtered
           .where((recipe) => recipe['difficulty'] == selectedFavFilter.value)
           .toList();
     }
 
-    // Filter dari Search Bar
     if (searchQuery.value.isNotEmpty) {
       var query = searchQuery.value.toLowerCase();
       filtered = filtered.where((recipe) {

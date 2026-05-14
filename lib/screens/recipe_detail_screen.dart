@@ -7,17 +7,56 @@ import '../controllers/recipe_controller.dart';
 class RecipeDetailScreen extends StatelessWidget {
   const RecipeDetailScreen({super.key});
 
+  // === FUNGSI SAKTI BUAT BIKIN KOTAK EMOJI ATAU GAMBAR ===
+  Widget _buildImageOrEmoji(String? imageUrl) {
+    String imageVal = imageUrl ?? 'assets/images/default.jpeg';
+
+    // Deteksi kalau isinya cuma 1-3 karakter (Emoji)
+    bool isEmoji =
+        imageVal.length <= 3 &&
+        !imageVal.contains('assets') &&
+        !imageVal.contains('http');
+
+    if (isEmoji) {
+      return Container(
+        color: const Color(0xFFFBE9E7), // Warna pastel estetik
+        child: Center(
+          child: Text(
+            imageVal,
+            style: const TextStyle(
+              fontSize: 120,
+            ), // Ukuran emoji gede buat header
+          ),
+        ),
+      );
+    } else {
+      return Image.asset(
+        imageVal,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => Container(
+          color: Colors.orange[200],
+          child: const Icon(Icons.broken_image, size: 80, color: Colors.white),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // NANGKEP DATA DARI HALAMAN SEBELUMNYA DI SINI
     final Map<String, dynamic> recipe = Get.arguments ?? {};
 
-    // Kalau misal datanya nyasar/kosong, tampilin error biar gak crash
     if (recipe.isEmpty) {
       return const Scaffold(
         body: Center(child: Text('Waduh, datanya nyangkut bre!')),
       );
     }
+
+    // Default value buat data yang rawan null dari AI
+    String tagColor = recipe['tag_color'] ?? '0xFFFFFFFF';
+    String tagTextColor = recipe['tag_text_color'] ?? '0xFF000000';
+    String tagText = recipe['tag'] ?? 'AI CHEF';
+    String ratingText =
+        recipe['rating'] ?? '5.0'; // Kasih nilai sempurna buat AI 😎
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -26,7 +65,7 @@ class RecipeDetailScreen extends StatelessWidget {
           // --- HEADER: GAMBAR AESTHETIC ---
           SliverAppBar(
             expandedHeight: 350,
-            pinned: true, // Biar tombol back gak ikut ilang pas discroll
+            pinned: true,
             backgroundColor: AppColors.primaryColor,
             elevation: 0,
             leading: Container(
@@ -44,70 +83,33 @@ class RecipeDetailScreen extends StatelessWidget {
                 onPressed: () => Get.back(),
               ),
             ),
-
-            // ==========================================
-            // INI DIA TAMBAHAN TOMBOL LOVE-NYA BRE
-            // ==========================================
             actions: [
               Container(
                 margin: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(
-                    0.8,
-                  ), // Background putih transparan biar seragam
+                  color: Colors.white.withOpacity(0.8),
                   shape: BoxShape.circle,
                 ),
                 child: Obx(() {
-                  // Panggil controller langsung di sini
                   final controller = Get.find<RecipeController>();
-
-                  // Cek apakah resep ini udah ada di memori favorit
                   bool isFav = controller.favoriteIds.contains(recipe['id']);
 
                   return IconButton(
                     icon: Icon(
                       isFav ? Icons.favorite : Icons.favorite_border,
-                      color: isFav
-                          ? Colors.red
-                          : Colors
-                                .grey[700], // Merah kalau dilove, abu gelap kalau belum
+                      color: isFav ? Colors.red : Colors.grey[700],
                       size: 24,
                     ),
                     onPressed: () {
-                      // Eksekusi fungsi toggle pas dipencet
                       controller.toggleFavorite(recipe['id']);
                     },
                   );
                 }),
               ),
             ],
-
-            // ==========================================
             flexibleSpace: FlexibleSpaceBar(
-              background: recipe['image_url'] != null
-                  ? Image.asset(
-                      recipe['image_url'],
-                      fit: BoxFit.cover,
-                      // Tambahin errorBuilder biar kalau salah ketik nama file ga crash
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.orange[200],
-                          child: const Icon(
-                            Icons.broken_image,
-                            size: 80,
-                            color: Colors.white,
-                          ),
-                        );
-                      },
-                    )
-                  : Container(
-                      color: Colors.orange[200],
-                      child: const Icon(
-                        Icons.restaurant,
-                        size: 80,
-                        color: Colors.white,
-                      ),
-                    ),
+              // --- PANGGIL FUNGSI EMOJI DI SINI ---
+              background: _buildImageOrEmoji(recipe['image_url']),
             ),
           ),
 
@@ -119,12 +121,10 @@ class RecipeDetailScreen extends StatelessWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
               ),
-              // Efek minus biar narik kotak putihnya naik nimpa gambar
               transform: Matrix4.translationValues(0.0, -32.0, 0.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ---> TAMBAHIN BARIS INI BIAR NGGAK MEPET <---
                   const SizedBox(height: 16),
 
                   // 1. Tag Kategori
@@ -134,13 +134,16 @@ class RecipeDetailScreen extends StatelessWidget {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: Color(int.parse(recipe['tag_color'])),
+                      color: Color(int.parse(tagColor)),
                       borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.grey.shade200,
+                      ), // Kasih border tipis kalau putih
                     ),
                     child: Text(
-                      recipe['tag'],
+                      tagText,
                       style: TextStyle(
-                        color: Color(int.parse(recipe['tag_text_color'])),
+                        color: Color(int.parse(tagTextColor)),
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
                         letterSpacing: 1.5,
@@ -155,7 +158,7 @@ class RecipeDetailScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          recipe['title'],
+                          recipe['title'] ?? 'Resep Spesial',
                           style: const TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.w900,
@@ -183,7 +186,7 @@ class RecipeDetailScreen extends StatelessWidget {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              recipe['rating'],
+                              ratingText,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -197,13 +200,13 @@ class RecipeDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 32),
 
-                  // 3. Ikon Informasi (Waktu, Kalori, Kesulitan)
+                  // 3. Ikon Informasi
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       _buildInfoIcon(
                         Icons.timer_outlined,
-                        recipe['time'],
+                        recipe['time'] ?? '-',
                         'Prep Time',
                       ),
                       _buildInfoIcon(
@@ -213,7 +216,7 @@ class RecipeDetailScreen extends StatelessWidget {
                       ),
                       _buildInfoIcon(
                         Icons.restaurant,
-                        recipe['difficulty'],
+                        recipe['difficulty'] ?? '-',
                         'Difficulty',
                       ),
                     ],
@@ -231,7 +234,8 @@ class RecipeDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    recipe['description'] ?? '',
+                    recipe['description'] ??
+                        'Belum ada deskripsi untuk resep ini.',
                     style: const TextStyle(
                       fontSize: 16,
                       color: Color(0xFF64748B),
@@ -241,44 +245,50 @@ class RecipeDetailScreen extends StatelessWidget {
                   const SizedBox(height: 32),
 
                   // 5. Bahan-Bahan
-                  const Text(
-                    'Bahan-bahan',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E293B),
+                  // Kalau ini resep AI, biasanya bahan dan step nyampur di deskripsi
+                  // Kita tampilin text beda kalau bahannya kosong
+                  if (recipe['ingredients'] != null) ...[
+                    const Text(
+                      'Bahan-bahan',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1E293B),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    recipe['ingredients'] ?? 'Bahan belum tersedia.',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Color(0xFF64748B),
-                      height: 1.8,
+                    const SizedBox(height: 12),
+                    Text(
+                      recipe['ingredients'],
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFF64748B),
+                        height: 1.8,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 32),
+                    const SizedBox(height: 32),
+                  ],
 
                   // 6. Cara Membuat
-                  const Text(
-                    'Cara Membuat',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E293B),
+                  if (recipe['steps'] != null) ...[
+                    const Text(
+                      'Cara Membuat',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1E293B),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    recipe['steps'] ?? 'Langkah belum tersedia.',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Color(0xFF64748B),
-                      height: 1.8,
+                    const SizedBox(height: 12),
+                    Text(
+                      recipe['steps'],
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFF64748B),
+                        height: 1.8,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 40),
+                    const SizedBox(height: 40),
+                  ],
                 ],
               ),
             ),

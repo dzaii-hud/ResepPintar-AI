@@ -36,6 +36,7 @@ class _AiChefScreenState extends State<AiChefScreen>
         'isUser': false,
         'text':
             "Halo Chef! 👨‍🍳\nAda bahan apa aja di kulkas hari ini? Biar aku bantu racikin resep rahasianya!",
+        'isRecipe': false, // <-- Tambahin ini
       },
     ];
   }
@@ -99,7 +100,7 @@ class _AiChefScreenState extends State<AiChefScreen>
     });
 
     // IP Laptop lu yang udah disesuaikan
-    final String apiUrl = 'http://172.20.2.74:8000/api/ai-chef';
+    final String apiUrl = 'http://192.168.0.232:8000/api/ai-chef';
 
     try {
       final response = await http.post(
@@ -114,7 +115,12 @@ class _AiChefScreenState extends State<AiChefScreen>
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
-          _messages.add({'isUser': false, 'text': data['reply']});
+          // TAMBAHIN 'isRecipe': true DI SINI
+          _messages.add({
+            'isUser': false,
+            'text': data['reply'],
+            'isRecipe': true,
+          });
         });
       } else {
         setState(() {
@@ -122,6 +128,7 @@ class _AiChefScreenState extends State<AiChefScreen>
             'isUser': false,
             'text':
                 'Waduh, server Laravel-nya error nih bre. Status: ${response.statusCode}',
+            'isRecipe': false, // TAMBAHIN INI JUGA
           });
         });
       }
@@ -130,12 +137,59 @@ class _AiChefScreenState extends State<AiChefScreen>
         _messages.add({
           'isUser': false,
           'text': 'Gagal nyambung ke dapur. Cek koneksi lu ya!\nError: $e',
+          'isRecipe': false, // DAN TAMBAHIN INI JUGA
         });
       });
     } finally {
       setState(() {
         _isLoading = false;
       });
+    }
+  }
+
+  Future<void> _saveRecipeToDatabase(String fullText) async {
+    // 1. Kita belah teksnya. Baris pertama (emoji) dipisah dari isi resepnya
+    final lines = fullText.trim().split('\n');
+    final String emoji = lines.isNotEmpty ? lines.first.trim() : '🤖';
+
+    // Sisa barisnya digabungin lagi jadi isi resep
+    final String recipeContent = lines.length > 1
+        ? lines.sublist(1).join('\n').trim()
+        : fullText;
+
+    // Pastikan IP ini sesuai sama yang di _sendMessage lu (192.168.0.232)
+    final String apiUrl = 'http://192.168.0.232:8000/api/ai-chef/save';
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({'emoji': emoji, 'content': recipeContent}),
+      );
+
+      if (response.statusCode == 200) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Berhasil! Resep AI udah masuk Database! ❤️'),
+          ),
+        );
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal nyimpen nih. Status: ${response.statusCode}'),
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error jaringan pas nyimpen: $e')));
     }
   }
 
@@ -340,15 +394,66 @@ class _AiChefScreenState extends State<AiChefScreen>
                           ),
                         ],
                       ),
-                      child: Text(
-                        msg['text'],
-                        style: TextStyle(
-                          color: isUser
-                              ? Colors.white
-                              : const Color(0xFF4A3728),
-                          fontSize: 15,
-                          height: 1.5,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: isUser
+                            ? CrossAxisAlignment.end
+                            : CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            msg['text'],
+                            style: TextStyle(
+                              color: isUser
+                                  ? Colors.white
+                                  : const Color(0xFF4A3728),
+                              fontSize: 15,
+                              height: 1.5,
+                            ),
+                          ),
+                          if (!isUser && msg['isRecipe'] == true) ...[
+                            // <-- UBAH BARIS INI DOANG
+                            const SizedBox(height: 8),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: InkWell(
+                                onTap: () {
+                                  // Panggil fungsi simpan ke database dan kirim teks resepnya
+                                  _saveRecipeToDatabase(msg['text']);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryColor.withOpacity(
+                                      0.1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.favorite_border,
+                                        color: AppColors.primaryColor,
+                                        size: 18,
+                                      ),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        "Simpan",
+                                        style: TextStyle(
+                                          color: AppColors.primaryColor,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ),
                   ),

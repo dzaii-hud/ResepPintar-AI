@@ -30,8 +30,12 @@ class MainScreen extends StatelessWidget {
     // Kalau selectedIndex berubah, Obx akan me-render ulang isi layarnya.
     return Obx(
       () => Scaffold(
-        // Bagian body ini mirip @yield('content'). Akan berubah sesuai index menu yang diklik.
-        body: pages[controller.selectedIndex.value],
+        // === INI YANG UDAH DIGANTI JADI INDEXEDSTACK ===
+        // Biar halaman ditumpuk di background & obrolan AI ga kereset
+        body: IndexedStack(
+          index: controller.selectedIndex.value,
+          children: pages,
+        ),
 
         // Menu Bawah (Footer)
         bottomNavigationBar: Container(

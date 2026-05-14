@@ -2,53 +2,47 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../utils/app_colors.dart';
-import '../controllers/auth_controller.dart'; // Pastikan path ini benar
+import '../controllers/auth_controller.dart';
 import '../controllers/recipe_controller.dart';
+import 'my_ai_recipes_screen.dart'; // Nanti kita bikin file ini bre
 
 class ProfileScreen extends StatelessWidget {
-  // Hapus 'const' di sini karena kita manggil controller
   ProfileScreen({super.key});
 
-  // Panggil controller rahasia kita
   final AuthController authController = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-
-      // --- TEMPEL INI DI BAGIAN appBar: ---
       appBar: AppBar(
-        backgroundColor: Colors.transparent, // Latar transparan elegan
-        elevation: 0, // Hapus bayangan biar flat cakep
-        centerTitle: true, // INI YANG BIKIN KE TENGAH
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
         leading: IconButton(
-          icon: const Icon(
-            Icons.menu,
-            color: AppColors.primaryColor,
-          ), // Warna oranye utama
-          onPressed: () {}, // Nanti diisi logika drawer
+          icon: const Icon(Icons.menu, color: AppColors.primaryColor),
+          onPressed: () {},
         ),
         title: const Text(
-          'Resep Pintar', // AI-nya dihapus, miringnya dihapus
+          'Resep Pintar',
           style: TextStyle(
             color: AppColors.primaryColor,
-            fontWeight: FontWeight.bold, // Cuma tebel aja
+            fontWeight: FontWeight.bold,
           ),
         ),
         actions: [
           IconButton(
             icon: const Icon(
               Icons.notifications_none,
-              color: AppColors.primaryTextColor, // Warna teks biasa
+              color: AppColors.primaryTextColor,
             ),
-            onPressed: () {}, // Nanti diisi logika notifikasi
+            onPressed: () {},
           ),
         ],
       ),
-      // ------------------------------------
-      // BUNGKUS DENGAN OBX BIAR DATANYA DINAMIS
       body: Obx(() {
+        final recipeController = Get.find<RecipeController>();
+
         return SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
@@ -67,7 +61,6 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      // Avatar + Tombol Edit
                       Stack(
                         children: [
                           Container(
@@ -84,7 +77,6 @@ class ProfileScreen extends StatelessWidget {
                                 ),
                               ],
                               image: DecorationImage(
-                                // OTOMATIS NARIK FOTO GOOGLE
                                 image: authController.userPhoto.value.isNotEmpty
                                     ? NetworkImage(
                                         authController.userPhoto.value,
@@ -116,8 +108,6 @@ class ProfileScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 20),
-
-                      // Nama Lengkap (Narik dari Google)
                       Text(
                         authController.userName.value.isNotEmpty
                             ? authController.userName.value
@@ -129,8 +119,6 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-
-                      // Email (Narik dari Google)
                       Text(
                         authController.userEmail.value.isNotEmpty
                             ? authController.userEmail.value
@@ -141,8 +129,6 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
-
-                      // Badges (Elite Chef & AI Master)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -211,22 +197,14 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // =======================================
-                      // INI YANG BERUBAH JADI DINAMIS BRE
-                      // =======================================
-                      Obx(() {
-                        final recipeController = Get.find<RecipeController>();
-                        return Text(
-                          '${recipeController.favoriteCount}', // Bakal nampilin jumlah riil resep yg dilove
-                          style: const TextStyle(
-                            // Kata const-nya gw pindahin ke sini biar aman
-                            fontSize: 32,
-                            fontWeight: FontWeight.w900,
-                            color: AppColors.primaryColor,
-                          ),
-                        );
-                      }),
-                      // =======================================
+                      Text(
+                        '${recipeController.favoriteCount}',
+                        style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w900,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
                       const SizedBox(height: 4),
                       const Text(
                         'SAVED RECIPES',
@@ -238,9 +216,12 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      const Text(
-                        '12', // Ini biarin aja dulu statis karena AI Prompts-nya belum kita bikin
-                        style: TextStyle(
+                      // ==========================================
+                      // INI ANGKA AI PROMPTS YANG UDAH LIVE
+                      // ==========================================
+                      Text(
+                        '${recipeController.aiRecipeCount}',
+                        style: const TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.w900,
                           color: Color(0xFF388E3C),
@@ -282,7 +263,9 @@ class ProfileScreen extends StatelessWidget {
                         AppColors.primaryColor,
                         Colors.white,
                         'My Recipes',
-                        'Manage your curated collections',
+                        'Manage your AI generated collections',
+                        // Fungsi pindah ke halaman MyAiRecipesScreen
+                        onTap: () => Get.to(() => const MyAiRecipesScreen()),
                       ),
                       Divider(color: Colors.grey[100], height: 1, indent: 80),
                       _buildMenuItem(
@@ -291,14 +274,20 @@ class ProfileScreen extends StatelessWidget {
                         AppColors.primaryColor,
                         'Settings',
                         'Account preferences and security',
+                        onTap: () {},
                       ),
                       Divider(color: Colors.grey[100], height: 1, indent: 80),
                       _buildMenuItem(
-                        Icons.favorite_border,
+                        // Ikon buku biar cocok sama tema dokumentasi
+                        Icons.menu_book_rounded,
                         const Color(0xFFD6E8FF),
                         AppColors.primaryColor,
-                        'Taste Profile',
-                        'Dietary restrictions and preferences',
+                        // Judul diganti jadi Buku Panduan
+                        'Buku Panduan AI',
+                        'Tips meracik prompt resep yang lezat',
+                        onTap: () {
+                          // Nanti kalau ada halamannya tinggal masukin Get.to() ke sini
+                        },
                       ),
                     ],
                   ),
@@ -310,7 +299,6 @@ class ProfileScreen extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    // SUNTIKAN FUNGSI LOGOUT DI SINI
                     onPressed: () {
                       authController.logout();
                     },
@@ -328,8 +316,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors
-                          .redAccent, // Ganti merah biar jelas itu tombol keluar
+                      backgroundColor: Colors.redAccent,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -353,8 +340,10 @@ class ProfileScreen extends StatelessWidget {
     Color iconBgColor,
     Color iconColor,
     String title,
-    String subtitle,
-  ) {
+    String subtitle, {
+    required VoidCallback
+    onTap, // Tambahin parameter onTap biar menunya bisa diklik
+  }) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       leading: Container(
@@ -375,7 +364,7 @@ class ProfileScreen extends StatelessWidget {
         style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
       ),
       trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-      onTap: () {},
+      onTap: onTap, // Pasang fungsinya di sini
     );
   }
 }
