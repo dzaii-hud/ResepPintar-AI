@@ -4,11 +4,21 @@ import 'package:firebase_core/firebase_core.dart'; // Wajib buat Firebase
 import 'screens/main_screen.dart';
 import 'screens/login_screen.dart';
 
+// --- TAMBAHIN IMPORT CONTROLLER DI SINI ---
+import 'controllers/auth_controller.dart';
+import 'controllers/recipe_controller.dart';
+
 // Tambahin 'async' di sini
 void main() async {
   // Dua baris ini hukumnya WAJIB sebelum runApp kalau pakai Firebase
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  // ==========================================
+  // BIKIN PABRIK OTAKNYA DI SINI BIAR GLOBAL & ABADI!
+  // ==========================================
+  Get.put(AuthController(), permanent: true);
+  Get.put(RecipeController(), permanent: true);
 
   runApp(const MyApp());
 }

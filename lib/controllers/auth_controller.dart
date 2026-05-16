@@ -7,6 +7,12 @@ class AuthController extends GetxController {
   var userEmail = ''.obs;
   var userPhoto = ''.obs;
 
+  // ==========================================
+  // FITUR EDIT GELAR (BARU DITAMBAHIN)
+  // ==========================================
+  var title1 = 'ELITE CHEF'.obs;
+  var title2 = 'AI MASTER'.obs;
+
   final String webClientId =
       '191900858378-juver7eeceqcmilg8lucig584sej06fo.apps.googleusercontent.com';
 
@@ -20,6 +26,8 @@ class AuthController extends GetxController {
   Future<void> _initGoogle() async {
     // Masukin KTP lu di sini pakai initialize
     await GoogleSignIn.instance.initialize(serverClientId: webClientId);
+
+    // Bagian signInSilently udah dicabut biar kaga error merah!
   }
 
   Future<void> loginWithGoogle() async {

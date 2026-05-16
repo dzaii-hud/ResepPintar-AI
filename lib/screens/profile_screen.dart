@@ -5,6 +5,8 @@ import '../utils/app_colors.dart';
 import '../controllers/auth_controller.dart';
 import '../controllers/recipe_controller.dart';
 import 'my_ai_recipes_screen.dart'; // Nanti kita bikin file ini bre
+import 'ai_guide_screen.dart';
+import 'settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
@@ -141,9 +143,9 @@ class ProfileScreen extends StatelessWidget {
                               color: const Color(0xFFC8E6C9),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Text(
-                              'ELITE CHEF',
-                              style: TextStyle(
+                            child: Text(
+                              authController.title1.value,
+                              style: const TextStyle(
                                 color: Color(0xFF2E7D32),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 10,
@@ -161,9 +163,9 @@ class ProfileScreen extends StatelessWidget {
                               color: const Color(0xFFFF8A65),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Text(
-                              'AI MASTER',
-                              style: TextStyle(
+                            child: Text(
+                              authController.title2.value,
+                              style: const TextStyle(
                                 color: Color(0xFF8D4004),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 10,
@@ -274,7 +276,7 @@ class ProfileScreen extends StatelessWidget {
                         AppColors.primaryColor,
                         'Settings',
                         'Account preferences and security',
-                        onTap: () {},
+                        onTap: () => Get.to(() => SettingsScreen()),
                       ),
                       Divider(color: Colors.grey[100], height: 1, indent: 80),
                       _buildMenuItem(
@@ -285,9 +287,7 @@ class ProfileScreen extends StatelessWidget {
                         // Judul diganti jadi Buku Panduan
                         'Buku Panduan AI',
                         'Tips meracik prompt resep yang lezat',
-                        onTap: () {
-                          // Nanti kalau ada halamannya tinggal masukin Get.to() ke sini
-                        },
+                        onTap: () => Get.to(() => const AiGuideScreen()),
                       ),
                     ],
                   ),
